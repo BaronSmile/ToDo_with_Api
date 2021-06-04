@@ -1,19 +1,12 @@
 import React, {useContext} from 'react';
+import {Link, withRouter} from 'react-router-dom';
+import AuthContext from '../Contexts'
 import {Button, Dropdown, Menu} from 'antd';
-import {Link, useHistory, useLocation} from 'react-router-dom';
 import {CaretDownOutlined, CaretUpOutlined, DownOutlined, FileAddOutlined} from '@ant-design/icons';
-
 import css from './navbar.module.scss';
-import AuthContext from "../context";
 
-interface Props {
-  handleSorting: (field: string, direction: string) => void
-}
-
-const Navbar = ({handleSorting}: Props) => {
-  const {authState, authDispatch} = useContext(AuthContext) as any;
-  const history = useHistory();
-  const location = useLocation();
+const Index = ({handleSorting, history, location}) => {
+  const {authState, authDispatch} = useContext(AuthContext);
 
   const sortMenu = (
     <>
@@ -65,7 +58,7 @@ const Navbar = ({handleSorting}: Props) => {
             По статусу
           </Menu.Item>
         </Menu>}
-    </>)
+    </>);
 
   return (
     <div className={css.menu}>
@@ -100,6 +93,6 @@ const Navbar = ({handleSorting}: Props) => {
       }
     </div>
   );
-};
+}
 
-export default Navbar;
+export default withRouter(Index);

@@ -1,7 +1,7 @@
-import React, {useContext, useState} from 'react';
-import AuthContext, {DevContext} from '../context';
-import {useHistory} from 'react-router-dom'
-import axios from "axios";
+import React, {useState, useContext} from 'react';
+import {withRouter} from 'react-router-dom';
+import axios from 'axios';
+import AuthContext, {DevContext} from './Contexts'
 import {Alert, Button, Form, Input} from 'antd';
 
 const layout = {
@@ -12,11 +12,9 @@ const tailLayout = {
   wrapperCol: {offset: 6, span: 12},
 };
 
-
-const Login = (props: { history: string[]; }) => {
-  const {authState, authDispatch} = useContext(AuthContext) as any;
-  const {developer} = useContext(DevContext) as any;
-  const history = useHistory();
+const Login = (props) => {
+  const {authState, authDispatch} = useContext(AuthContext);
+  const {developer} = useContext(DevContext);
 
   if (authState.isAuthenticated) {
     props.history.push('/');
@@ -40,28 +38,29 @@ const Login = (props: { history: string[]; }) => {
     bodyFormData.set('password', password);
 
     const login = (await axios.post(`https://uxcandy.com/~shapoval/test-task-backend/v2/login?developer=${developer}`, bodyFormData, {
-      headers: {'Content-Type': 'multipart/form-data'}
+      headers: {'Content-Type': 'multipart/form-data' }
     })).data;
 
     if (login.status === 'ok') {
-      authDispatch({type: 'LOGIN', user: userName, token: login.message.token});
-      history.push('/');
+      authDispatch({ type: 'LOGIN', user: userName, token: login.message.token });
+      props.history.push('/');
     } else {
       setAlert('Неправильные реквизиты доступа!');
       setDisabled(false);
     }
   }
+
   return (
     <Form
       {...layout}
       name="basic"
       initialValues={{remember: true}}
       title='Авторизация'
-      style={{paddingTop:'3em'}}
+      style={{paddingTop: '3em'}}
     >
       {
         alertState &&
-        <Alert style={{margin:'2em '}} message={alertState} type="error" showIcon />
+        <Alert style={{margin: '2em '}} message={alertState} type="error" showIcon/>
       }
 
       <Form.Item
@@ -79,7 +78,9 @@ const Login = (props: { history: string[]; }) => {
         name="password"
         rules={[{required: true, message: 'Введите пароль!'}]}
       >
-        <Input.Password disabled={disabled} onBlur={(e) => {setPassword(e.target.value)}}/>
+        <Input.Password disabled={disabled} onBlur={(e) => {
+          setPassword(e.target.value)
+        }}/>
       </Form.Item>
 
       <Form.Item {...tailLayout}>
@@ -88,7 +89,7 @@ const Login = (props: { history: string[]; }) => {
         </Button>
       </Form.Item>
     </Form>
-  );
-};
+  )
+}
 
-export default Login;
+export default withRouter(Login);
